@@ -170,7 +170,11 @@ void CaptureMouseOnce(SDL_Window* gWindow) {
 void ResetMouseCapture() {
     mouseCaptured = false;
 }
-
+static bool disableVSyncByFile = []() {
+    std::ifstream novsync_file1("novsync");
+    std::ifstream novsync_file2("novsync.txt");
+    return novsync_file1.good() || novsync_file2.good();
+}();
 __declspec(dllexport) void FlipPages(void) {
     std::lock_guard<std::mutex> lock(renderMutex);
     static bool currentVSync = false;
@@ -210,7 +214,8 @@ __declspec(dllexport) void FlipPages(void) {
         return true;
     };
 
-    bool needVSync = (InGame || InEditor);
+    // Обновление VSync с учетом игры, редактора и файлов novsync
+    bool needVSync = (InGame || InEditor) && !disableVSyncByFile;
     if (gRenderer && (currentVSync != needVSync)) {
         if (!recreateRendererAndResources(needVSync)) {
             return;
