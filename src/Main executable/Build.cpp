@@ -196,12 +196,19 @@ void OneObject::Produce( word ID, word GroupID )
 	ID &= 8191;
 	//checking for infinity
 	Order1* OR2 = LocalOrder;
-	while ( OR2 )
-	{
-		if ( OR2->DoLink == &ProduceObjLink&&OR2->info.Produce.ObjIndex == ID
-			&&OR2->info.Produce.ID == 0xFFFE )return;
+	while (OR2) {
+		if (OR2->DoLink == &ProduceObjLink
+			&& OR2->info.Produce.ObjIndex == ID
+			&& OR2->info.Produce.ID == 0xFFFE)
+		{
+			if (newMons->IconID == 8)  // дипломатический центр
+				break;
+			else
+				return;
+		}
 		OR2 = OR2->NextOrder;
-	};
+	}
+
 	if ( GroupID == 0xFFFE )
 	{
 		OR2 = LocalOrder;
@@ -704,7 +711,7 @@ void GetCorrectMoney( byte NI, int* MONEY )
 };
 int GetAmount( word ID )
 {
-	word CID = 0;
+	int CID = 0;
 	word Nsel = ImNSL[MyNation];
 	word* SMon = ImSelm[MyNation];
 	for ( int i = 0; i < Nsel; i++ )
@@ -741,7 +748,7 @@ int GetAmount( word ID )
 
 int GetProgress( word ID, int* MaxProgress )
 {
-	word CID = 0;
+	int CID = 0;
 	word Nsel = ImNSL[MyNation];
 	word* SMon = ImSelm[MyNation];
 	for ( int i = 0; i < Nsel; i++ )
